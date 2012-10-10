@@ -1,7 +1,6 @@
 package com.noobs2d.crazycrane.stage;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import javax.management.RuntimeErrorException;
 
@@ -9,6 +8,7 @@ import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.equations.Bounce;
 import aurelienribon.tweenengine.equations.Cubic;
+import aurelienribon.tweenengine.equations.Elastic;
 import aurelienribon.tweenengine.equations.Linear;
 
 import com.badlogic.gdx.Game;
@@ -27,6 +27,7 @@ public class SurvivalModeStage extends CrazyCraneStage {
 		super(game);
 		initGridPoints();
 		initBuilding();
+		hud = new HeadsUpDisplay(this);
 	}
 
 	/**
@@ -53,8 +54,8 @@ public class SurvivalModeStage extends CrazyCraneStage {
 	 * @return
 	 */
 	public Building getRandomBuilding() {
-		Random random = new Random();
-		int randomNumber = random.nextInt(4 - 1 + 1) + 1;
+
+		int randomNumber = random.nextInt(4) + 1;
 		switch (randomNumber) {
 			case 1:
 			case 2:
@@ -89,7 +90,7 @@ public class SurvivalModeStage extends CrazyCraneStage {
 	}
 
 	@Override
-	public void onTouchDown(float x, float y, int pointer, int button) {
+	public void onTouchDown(float x, float y, int pointer) {
 		System.out.println("X " + x + "\t" + y);
 		Vector2 position = new Vector2(x, y);
 		position.x *= (float) Settings.SCREEN_WIDTH / Gdx.graphics.getWidth();
@@ -102,15 +103,57 @@ public class SurvivalModeStage extends CrazyCraneStage {
 	}
 
 	@Override
-	public void render(float deltaTime) {
+	public void onSwipe(float velocityX, float velocityY) {
+		if (Math.abs(velocityX) > Math.abs(velocityY)) {
+			if (velocityX > 0) {
 
+				System.out.println("RIGHT");
+				allArrayList.get(0).get(allArrayList.get(0).size() - 1).interpolateXY(topGridpoints[1], Elastic.INOUT, 1000, true);
+				allArrayList.get(1).get(allArrayList.get(1).size() - 1).interpolateXY(topGridpoints[2], Elastic.INOUT, 1000, true);
+				allArrayList.get(2).get(allArrayList.get(2).size() - 1).interpolateXY(topGridpoints[0], Elastic.INOUT, 1000, true);
+
+				BuildingTemp = allArrayList.get(0).get(allArrayList.get(0).size() - 1);
+				allArrayList.get(0).set(allArrayList.get(0).size() - 1, allArrayList.get(2).get(allArrayList.get(2).size() - 1));
+				allArrayList.get(2).set(allArrayList.get(2).size() - 1, allArrayList.get(1).get(allArrayList.get(1).size() - 1));
+				allArrayList.get(1).set(allArrayList.get(1).size() - 1, BuildingTemp);
+
+			} else {
+				System.out.println("Left");
+				allArrayList.get(0).get(allArrayList.get(0).size() - 1).interpolateXY(topGridpoints[2], Elastic.INOUT, 1000, true);
+				allArrayList.get(1).get(allArrayList.get(1).size() - 1).interpolateXY(topGridpoints[0], Elastic.INOUT, 1000, true);
+				allArrayList.get(2).get(allArrayList.get(2).size() - 1).interpolateXY(topGridpoints[1], Elastic.INOUT, 1000, true);
+
+				BuildingTemp = allArrayList.get(0).get(allArrayList.get(0).size() - 1);
+				allArrayList.get(0).set(allArrayList.get(0).size() - 1, allArrayList.get(1).get(allArrayList.get(1).size() - 1));
+				allArrayList.get(1).set(allArrayList.get(1).size() - 1, allArrayList.get(2).get(allArrayList.get(2).size() - 1));
+				allArrayList.get(2).set(allArrayList.get(2).size() - 1, BuildingTemp);
+			}
+		} else {
+			if (velocityY > 0) {
+				System.out.println("DOWN");
+			} else {
+				System.out.println("UP");
+			}
+		}
+	}
+
+	@Override
+	public void onTouchMove(float x, float y) {
+		System.out.println("LONG PRESS");
+	}
+
+	@Override
+	public void render(float deltaTime) {
+		stageSecondsElapsed += deltaTime;
 		spriteBatch.setProjectionMatrix(camera.projection);
 		getCamera().update();
 		updateBuilding(deltaTime);
 		updateBuildingCombo(deltaTime);
+		hud.update(deltaTime);
 		// updateBuildingCombo2(deltaTime);
 
 		spriteBatch.begin();
+
 		for (int columnIndex = allArrayList.get(0).size() - 1; columnIndex > -1; columnIndex--) {
 			allArrayList.get(0).get(columnIndex).render(spriteBatch);
 		}
@@ -120,6 +163,7 @@ public class SurvivalModeStage extends CrazyCraneStage {
 		for (int columnIndex = allArrayList.get(2).size() - 1; columnIndex > -1; columnIndex--) {
 			allArrayList.get(2).get(columnIndex).render(spriteBatch);
 		}
+		hud.render(spriteBatch);
 		spriteBatch.end();
 		// System.out.print(Gdx.graphics.getFramesPerSecond());
 		// System.out.println(" DeltaTime : " + Gdx.graphics.getDeltaTime());
@@ -144,18 +188,18 @@ public class SurvivalModeStage extends CrazyCraneStage {
 
 	@Override
 	protected boolean inputBuilding(float x, float y, int pointer) {
-		if (x < 280) {
+		if (x < 280 && y < 800) {
 			if (Column0Ready == true) {
 				inputDrop(0);
 				firstCounter = true;
 			}
-		} else if (x < 520) {
+		} else if (x < 520 && y < 800) {
 			if (Column1Ready == true) {
 				inputDrop(1);
 				firstCounter = true;
 			}
 
-		} else {
+		} else if (y < 800) {
 			if (Column2Ready == true) {
 				inputDrop(2);
 				firstCounter = true;
@@ -265,51 +309,57 @@ public class SurvivalModeStage extends CrazyCraneStage {
 		if (Column0Ready || Column1Ready || Column2Ready) {
 			if (Column0Ready) {
 				if (allArrayList.get(0).size() - 1 >= 3) {
-					checkVertical(0, allArrayList.get(0).size() - 1);
+					checkTempCombo(checkVertical(0, allArrayList.get(0).size() - 1));
 				}
 
 			}
 			if (Column1Ready) {
 				if (allArrayList.get(1).size() - 1 >= 3) {
-					checkVertical(1, allArrayList.get(1).size() - 1);
+					checkTempCombo(checkVertical(1, allArrayList.get(1).size() - 1));
 				}
 
 			}
 			if (Column2Ready) {
 				if (allArrayList.get(2).size() - 1 >= 3) {
-					checkVertical(2, allArrayList.get(2).size() - 1);
+					checkTempCombo(checkVertical(2, allArrayList.get(2).size() - 1));
 				}
 			}
 		}
 	}
 
-	public void checkVertical(int col, int row) {
+	public ArrayList<Vector2> checkVertical(int col, int row) {
 		temp = new ArrayList<Vector2>();
 
 		for (int index = row - 1; index >= row - 3; index--) {
 
 			temp.add(new Vector2(col, index));
 		}
-		checkTempCombo(temp);
+
+		return temp;
 
 	}
 
 	public void checkTempCombo(ArrayList<Vector2> temp) {
+
 		if (allArrayList.get((int) temp.get(1).x).get((int) temp.get(1).y) != null && allArrayList.get((int) temp.get(2).x).get((int) temp.get(2).y) != null
 				&& allArrayList.get((int) temp.get(0).x).get((int) temp.get(0).y) != null) {
 			int tempColor = allArrayList.get((int) temp.get(0).x).get((int) temp.get(0).y).BuildingColor;
-			if (allArrayList.get((int) temp.get(1).x).get((int) temp.get(1).y).BuildingColor == tempColor && allArrayList.get((int) temp.get(2).x).get((int) temp.get(2).y).BuildingColor == tempColor) {
-				if (allArrayList.get((int) temp.get(1).x).get((int) temp.get(1).y).state == buildingState.FALLING
-						&& allArrayList.get((int) temp.get(2).x).get((int) temp.get(2).y).state == buildingState.FALLING
-						&& allArrayList.get((int) temp.get(0).x).get((int) temp.get(0).y).state == buildingState.FALLING) {
+
+			if (allArrayList.get((int) temp.get(1).x).get((int) temp.get(1).y).state == buildingState.FALLING
+					&& allArrayList.get((int) temp.get(2).x).get((int) temp.get(2).y).state == buildingState.FALLING
+					&& allArrayList.get((int) temp.get(0).x).get((int) temp.get(0).y).state == buildingState.FALLING) {
+
+				if (allArrayList.get((int) temp.get(1).x).get((int) temp.get(1).y).BuildingColor == tempColor
+						&& allArrayList.get((int) temp.get(2).x).get((int) temp.get(2).y).BuildingColor == tempColor) {
+
 					allArrayList.get((int) temp.get(0).x).get((int) temp.get(0).y).state = buildingState.DESTROYED;
 					allArrayList.get((int) temp.get(1).x).get((int) temp.get(1).y).state = buildingState.DESTROYED;
 					allArrayList.get((int) temp.get(2).x).get((int) temp.get(2).y).state = buildingState.DESTROYED;
 					allArrayList.get((int) temp.get(0).x).remove((int) temp.get(0).y);
 					allArrayList.get((int) temp.get(1).x).remove((int) temp.get(1).y);
 					allArrayList.get((int) temp.get(2).x).remove((int) temp.get(2).y);
+					score += 3;
 				}
-
 			}
 		}
 

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.noobs2d.crazycrane.Art;
+import com.noobs2d.crazycrane.Fonts;
 import com.noobs2d.crazycrane.Settings;
 import com.noobs2d.tweenengine.utils.DynamicScreen;
 
@@ -26,7 +27,7 @@ public class StageLoadingScreen extends DynamicScreen {
 		shapeRenderer = new ShapeRenderer();
 		Art.load(assetManager);
 		// AliensArt.load(assetManager);
-		// Fonts.load(assetManager);
+		Fonts.load(assetManager);
 		// Particles.load();
 		// Sounds.load(assetManager);
 
@@ -40,7 +41,7 @@ public class StageLoadingScreen extends DynamicScreen {
 		this.stageScreen = stageScreen;
 		Art.load(assetManager);
 		// AliensArt.load(assetManager);
-		// Fonts.load(assetManager);
+		Fonts.load(assetManager);
 		// Particles.load();
 		// Sounds.load(assetManager);
 
@@ -78,7 +79,7 @@ public class StageLoadingScreen extends DynamicScreen {
 		if (assetManager.getProgress() == 1.0) { // Loading is finished.
 			Art.retrieve(assetManager);
 			// AliensArt.retrieve(assetManager);
-			// Fonts.retrieve(assetManager);
+			Fonts.retrieve(assetManager);
 			// Sounds.retrieve(assetManager);
 			label.dispose();
 

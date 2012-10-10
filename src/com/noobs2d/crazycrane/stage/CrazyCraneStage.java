@@ -1,6 +1,7 @@
 package com.noobs2d.crazycrane.stage;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Vector2;
@@ -21,6 +22,12 @@ public abstract class CrazyCraneStage extends DynamicScreen {
 	protected boolean Column1Ready = true;
 	protected boolean Column2Ready = true;
 	protected boolean firstCounter = false;
+	protected HeadsUpDisplay hud;
+	protected Random random = new Random();
+	public float stageSecondsDuration = 30f;
+	public float stageSecondsElapsed = 0;
+	public Building BuildingTemp;
+	public int score = 0;
 
 	public CrazyCraneStage(Game game) {
 		super(game);
