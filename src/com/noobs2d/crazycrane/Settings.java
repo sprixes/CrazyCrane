@@ -10,8 +10,11 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 public class Settings {
 
-	public static final int SCREEN_WIDTH = 800;
-	public static final int SCREEN_HEIGHT = 1280;
+	public static final int SCREEN_WIDTH = 480;
+	public static final int SCREEN_HEIGHT = 800;
+
+	public static boolean musicEnabled = true;
+	public static boolean soundEnabled = true;
 
 	public static AssetManager getAssetManager() {
 

@@ -30,7 +30,7 @@ public abstract class CrazyCraneStage extends DynamicScreen {
 	public int score = 0;
 
 	public CrazyCraneStage(Game game) {
-		super(game);
+		super(game, 800, 1280);
 
 	}
 
