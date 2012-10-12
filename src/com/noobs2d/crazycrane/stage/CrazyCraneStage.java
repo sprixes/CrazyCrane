@@ -6,7 +6,9 @@ import java.util.Random;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Vector2;
 import com.noobs2d.crazycrane.building.Building;
+import com.noobs2d.tweenengine.utils.DynamicAnimation;
 import com.noobs2d.tweenengine.utils.DynamicScreen;
+import com.noobs2d.tweenengine.utils.DynamicSprite;
 
 public abstract class CrazyCraneStage extends DynamicScreen {
 
@@ -15,6 +17,8 @@ public abstract class CrazyCraneStage extends DynamicScreen {
 	protected ArrayList<Building> column3Array = new ArrayList<Building>();
 	protected ArrayList<ArrayList<Building>> allArrayList = new ArrayList<ArrayList<Building>>();
 	protected ArrayList<Vector2> temp;
+	protected DynamicAnimation comboArt;
+	protected DynamicSprite background;
 
 	protected final Vector2[][] gridPoints = new Vector2[3][20];
 	protected final Vector2[] topGridpoints = new Vector2[3];
@@ -28,6 +32,7 @@ public abstract class CrazyCraneStage extends DynamicScreen {
 	public float stageSecondsElapsed = 0;
 	public Building BuildingTemp;
 	public int score = 0;
+	public float time = 120;
 
 	public CrazyCraneStage(Game game) {
 		super(game, 800, 1280);

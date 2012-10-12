@@ -3,30 +3,44 @@ gfxbuilding.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+bg
+  rotate: false
+  xy: 1, 383
+  size: 918, 1273
+  orig: 918, 1273
+  offset: 0, 0
+  index: -1
+combo
+  rotate: false
+  xy: 1, 219
+  size: 352, 162
+  orig: 352, 162
+  offset: 0, 0
+  index: -1
 Blue
   rotate: false
-  xy: 1, 1
+  xy: 1, 110
   size: 211, 107
   orig: 211, 107
   offset: 0, 0
   index: -1
 Green
   rotate: false
-  xy: 214, 1
+  xy: 355, 274
   size: 211, 107
   orig: 211, 107
   offset: 0, 0
   index: -1
 Red
   rotate: false
-  xy: 427, 1
+  xy: 1, 1
   size: 211, 107
   orig: 211, 107
   offset: 0, 0
   index: -1
 Yellow
   rotate: false
-  xy: 640, 1
+  xy: 568, 274
   size: 211, 107
   orig: 211, 107
   offset: 0, 0

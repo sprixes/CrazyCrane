@@ -18,6 +18,7 @@ public class HeadsUpDisplay {
 
 	public BitmapFont fps;
 	public BitmapFont score;
+	public BitmapFont time;
 	public BitmapFont timeElapsed;
 	public BitmapFont appearanceRate;
 	public BitmapFont appearanceDelay;
@@ -26,7 +27,7 @@ public class HeadsUpDisplay {
 		this.stage = stage;
 
 		fps = new BitmapFont();
-
+		time = Fonts.akaDylanCollage64;
 		timeElapsed = new BitmapFont();
 		appearanceDelay = new BitmapFont();
 		appearanceRate = new BitmapFont();
@@ -42,6 +43,7 @@ public class HeadsUpDisplay {
 	}
 
 	private void renderTexts(SpriteBatch spriteBatch) {
+		time.drawWrapped(spriteBatch, "Time: " + Math.round(stage.time), 0, 1280, 250, HAlignment.LEFT);
 		score.drawWrapped(spriteBatch, "" + stage.score, 500, 1200, 250, HAlignment.RIGHT);
 		fps.drawWrapped(spriteBatch, "GAME FPS: " + Gdx.graphics.getFramesPerSecond() + " fps", 0, 48, 200, HAlignment.LEFT);
 		timeElapsed.drawWrapped(spriteBatch, "TIME ELAPSED: " + stage.stageSecondsElapsed, 0, 36, 200, HAlignment.LEFT);

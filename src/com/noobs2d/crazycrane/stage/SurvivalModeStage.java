@@ -14,6 +14,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector2;
+import com.noobs2d.crazycrane.Art;
 import com.noobs2d.crazycrane.Settings;
 import com.noobs2d.crazycrane.Sounds;
 import com.noobs2d.crazycrane.building.Building;
@@ -22,6 +23,7 @@ import com.noobs2d.crazycrane.building.BuildingBlue;
 import com.noobs2d.crazycrane.building.BuildingGreen;
 import com.noobs2d.crazycrane.building.BuildingRed;
 import com.noobs2d.crazycrane.building.BuildingYellow;
+import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
 
 public class SurvivalModeStage extends CrazyCraneStage {
 
@@ -29,8 +31,17 @@ public class SurvivalModeStage extends CrazyCraneStage {
 		super(game);
 		initGridPoints();
 		initBuilding();
+		comboArt = Art.ComboArt;
+		comboArt.setRegistration(DynamicRegistration.BOTTOM_LEFT);
+		comboArt.visible = false;
+		background = Art.BackgroundArt;
+		background.setRegistration(DynamicRegistration.BOTTOM_LEFT);
+		background.position.set(-10, 5);
+
 		hud = new HeadsUpDisplay(this);
 		if (Settings.musicEnabled == true) {
+			Sounds.backgroundMusic.setLooping(true);
+			Sounds.backgroundMusic.setVolume(10);
 			Sounds.backgroundMusic.play();
 		}
 	}
@@ -104,12 +115,10 @@ public class SurvivalModeStage extends CrazyCraneStage {
 		System.out.println(position);
 
 		inputBuilding(position.x, position.y, pointer);
-
 	}
 
 	@Override
 	public void onSwipe(float velocityX, float velocityY) {
-
 		if (Math.abs(velocityX) > Math.abs(velocityY)) {
 			if (velocityX > 0) {
 
@@ -147,21 +156,23 @@ public class SurvivalModeStage extends CrazyCraneStage {
 	}
 
 	@Override
-	public void onTouchMove(float x, float y) {
-		System.out.println("LONG PRESS");
-	}
-
-	@Override
 	public void render(float deltaTime) {
 		stageSecondsElapsed += deltaTime;
-		// spriteBatch.setProjectionMatrix(camera.projection);
+		time -= deltaTime;
+		if (time < 0) {
+			System.out.println("GAME OVER");
+		}
+		spriteBatch.setProjectionMatrix(camera.projection);
 		getCamera().update();
+		background.update(deltaTime);
+		comboArt.update(deltaTime);
 		updateBuilding(deltaTime);
 		updateBuildingCombo(deltaTime);
 		hud.update(deltaTime);
 		// updateBuildingCombo2(deltaTime);
 
 		spriteBatch.begin();
+		background.render(spriteBatch);
 
 		for (int columnIndex = allArrayList.get(0).size() - 1; columnIndex > -1; columnIndex--) {
 			allArrayList.get(0).get(columnIndex).render(spriteBatch);
@@ -172,7 +183,9 @@ public class SurvivalModeStage extends CrazyCraneStage {
 		for (int columnIndex = allArrayList.get(2).size() - 1; columnIndex > -1; columnIndex--) {
 			allArrayList.get(2).get(columnIndex).render(spriteBatch);
 		}
+		comboArt.render(spriteBatch);
 		hud.render(spriteBatch);
+
 		spriteBatch.end();
 		// System.out.print(Gdx.graphics.getFramesPerSecond());
 		// System.out.println(" DeltaTime : " + Gdx.graphics.getDeltaTime());
@@ -385,6 +398,19 @@ public class SurvivalModeStage extends CrazyCraneStage {
 					if (Settings.soundEnabled = true) {
 						Sounds.destroySfx.play();
 					}
+
+					camera.shake();
+
+					comboArt.visible = true;
+					comboArt.color.a = 1;
+					comboArt.position.set(allArrayList.get((int) temp.get(1).x).get((int) temp.get(1).y).position);
+					comboArt.interpolateAlpha(0, Bounce.INOUT, 1000, true).setCallbackTriggers(TweenCallback.COMPLETE).setCallback(new TweenCallback() {
+						@Override
+						public void onEvent(int type, BaseTween<?> source) {
+							comboArt.visible = false;
+
+						}
+					});
 					allArrayList.get((int) temp.get(0).x).get((int) temp.get(0).y).state = buildingState.DESTROYED;
 					allArrayList.get((int) temp.get(1).x).get((int) temp.get(1).y).state = buildingState.DESTROYED;
 					allArrayList.get((int) temp.get(2).x).get((int) temp.get(2).y).state = buildingState.DESTROYED;
