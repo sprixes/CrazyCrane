@@ -33,13 +33,14 @@ public abstract class CrazyCraneStage extends DynamicScreen {
 	public Building BuildingTemp;
 	public int score = 0;
 	public float time = 120;
+	public Vector2 positionTouch;
 
 	public CrazyCraneStage(Game game) {
 		super(game, 800, 1280);
 
 	}
 
-	protected abstract boolean inputBuilding(float x, float y, int pointer);
+	protected abstract boolean inputBuilding(float x, float y);
 
 	protected abstract void inputDrop(int Column);
 

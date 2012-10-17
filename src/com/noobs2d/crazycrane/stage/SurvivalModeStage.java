@@ -41,7 +41,7 @@ public class SurvivalModeStage extends CrazyCraneStage {
 		hud = new HeadsUpDisplay(this);
 		if (Settings.musicEnabled == true) {
 			Sounds.backgroundMusic.setLooping(true);
-			Sounds.backgroundMusic.setVolume(10);
+			Sounds.backgroundMusic.setVolume(100);
 			Sounds.backgroundMusic.play();
 		}
 	}
@@ -111,17 +111,18 @@ public class SurvivalModeStage extends CrazyCraneStage {
 		Vector2 position = new Vector2(x, y);
 		position.x *= (float) Settings.SCREEN_WIDTH / Gdx.graphics.getWidth();
 		position.y = (Gdx.graphics.getHeight() * camera.zoom - position.y) * Settings.SCREEN_HEIGHT / Gdx.graphics.getHeight();
-
+		positionTouch = position;
 		System.out.println(position);
 
-		inputBuilding(position.x, position.y, pointer);
 	}
 
 	@Override
 	public void onSwipe(float velocityX, float velocityY) {
 		if (Math.abs(velocityX) > Math.abs(velocityY)) {
 			if (velocityX > 0) {
-
+				if (Settings.soundEnabled = true) {
+					Sounds.swipeSfx.play();
+				}
 				System.out.println("RIGHT");
 				allArrayList.get(0).get(allArrayList.get(0).size() - 1).interpolateXY(topGridpoints[1], Linear.INOUT, 1000, true);
 				allArrayList.get(1).get(allArrayList.get(1).size() - 1).interpolateXY(topGridpoints[2], Linear.INOUT, 1000, true);
@@ -133,6 +134,9 @@ public class SurvivalModeStage extends CrazyCraneStage {
 				allArrayList.get(1).set(allArrayList.get(1).size() - 1, BuildingTemp);
 
 			} else {
+				if (Settings.soundEnabled = true) {
+					Sounds.swipeSfx.play();
+				}
 				System.out.println("Left");
 				allArrayList.get(0).get(allArrayList.get(0).size() - 1).interpolateXY(topGridpoints[2], Linear.INOUT, 1000, true);
 				allArrayList.get(1).get(allArrayList.get(1).size() - 1).interpolateXY(topGridpoints[0], Linear.INOUT, 1000, true);
@@ -145,24 +149,24 @@ public class SurvivalModeStage extends CrazyCraneStage {
 			}
 		} else {
 			if (velocityY > 0) {
-				System.out.println("DOWN");
+				inputBuilding(positionTouch.x, positionTouch.y);
 			} else {
-				System.out.println("UP");
+				inputBuilding(positionTouch.x, positionTouch.y);
 			}
 		}
-		if (Settings.soundEnabled = true) {
-			Sounds.swipeSfx.play();
-		}
+
 	}
 
 	@Override
 	public void render(float deltaTime) {
+
 		stageSecondsElapsed += deltaTime;
 		time -= deltaTime;
 		if (time < 0) {
-			System.out.println("GAME OVER");
+			game.setScreen(new ScoreStage(game, score, assetManager));
+
 		}
-		spriteBatch.setProjectionMatrix(camera.projection);
+		// spriteBatch.setProjectionMatrix();
 		getCamera().update();
 		background.update(deltaTime);
 		comboArt.update(deltaTime);
@@ -209,8 +213,10 @@ public class SurvivalModeStage extends CrazyCraneStage {
 	}
 
 	@Override
-	protected boolean inputBuilding(float x, float y, int pointer) {
-		if (x < Gdx.graphics.getWidth() / 3 && y < Gdx.graphics.getHeight() / 2 + Gdx.graphics.getHeight() / 4) {
+	protected boolean inputBuilding(float x, float y) {
+		// if (x < Settings.SCREEN_WIDTH / 3 && y < Settings.SCREEN_HEIGHT / 2 +
+		// Settings.SCREEN_HEIGHT / 4) {
+		if (x < Settings.SCREEN_WIDTH / 3) {
 			if (Column0Ready == true) {
 				inputDrop(0);
 				firstCounter = true;
@@ -218,7 +224,9 @@ public class SurvivalModeStage extends CrazyCraneStage {
 					Sounds.fallSfx.play();
 				}
 			}
-		} else if (x < (Gdx.graphics.getWidth() / 3) * 2 && y < Gdx.graphics.getHeight() / 2 + Gdx.graphics.getHeight() / 4) {
+			// } else if (x < (Settings.SCREEN_WIDTH / 3) * 2 && y <
+			// Settings.SCREEN_HEIGHT / 2 + Settings.SCREEN_HEIGHT / 4) {
+		} else if (x < (Settings.SCREEN_WIDTH / 3) * 2) {
 			if (Column1Ready == true) {
 				inputDrop(1);
 				firstCounter = true;
@@ -227,7 +235,9 @@ public class SurvivalModeStage extends CrazyCraneStage {
 				}
 			}
 
-		} else if (y < Gdx.graphics.getHeight() / 2 + Gdx.graphics.getHeight() / 4) {
+			// } else if (y < Gdx.graphics.getHeight() / 2 +
+			// Settings.SCREEN_HEIGHT / 4) {
+		} else {
 			if (Column2Ready == true) {
 				inputDrop(2);
 				firstCounter = true;
